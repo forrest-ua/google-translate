@@ -7,11 +7,11 @@ class ResultParser
   end
 
   def translation
-    result[0][0][0]
+    result[0][0..-2].map{|a| a[0]}.join
   end
 
   def translit
-    result[0][1][2]
+    result[0][-1][3]
   end
 
   def nouns

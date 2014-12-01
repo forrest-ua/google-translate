@@ -63,7 +63,7 @@ class GoogleTranslate
   def call_translate_service from_lang, to_lang, text
     url = translate_url(from_lang, to_lang)
 
-    response = call_service url + "&q=#{text}"
+    response = call_service url, "q=#{text}"
 
     response.body.split(',').collect { |s| s == '' ? "\"\"" : s }.join(",") # fix json object
   end
@@ -71,15 +71,15 @@ class GoogleTranslate
   def call_speech_service lang, text
     url = speech_url(lang)
 
-    response = call_service url + "&q=#{text}"
+    response = call_service url, "q=#{text}"
 
     response.body
   end
 
-  def call_service url
+  def call_service url, body
     accessor = ResourceAccessor.new
 
-    accessor.get_response url: url
+    accessor.get_response :url => url, :method => :post, :body => body
   end
 
   def collect_languages buffer, index, tag_name, tag_id
