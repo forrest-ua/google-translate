@@ -133,9 +133,7 @@ class GoogleTranslate
   end
 
   def char_code_at(str, index)
-    char = str[index]
-    v = char.unpack('H*')[0]
-    v.to_i(16)
+    str[index].ord
   end
 
   def rl(a, b)
@@ -150,8 +148,12 @@ class GoogleTranslate
     a
   end
 
+  def generate_b
+    ((Time.new() - Time.new(1970,1,1)) / 3600).floor
+  end
+
   def tl(a)
-    b = 402890
+    b = generate_b
     d = []
     e = 0
     f = 0
@@ -160,22 +162,28 @@ class GoogleTranslate
       g = char_code_at(a, f)
       if 128 > g
         d[e] = g
+        e += 1
       else
-        if 1048 > g
+        if 2048 > g
           d[e] = g >> 6 | 192
+          e += 1
         else
           if (55296 == (g & 64512) && f + 1 < a.length && 56320 == (char_code_at(a, (f+1)) & 64512))
             g = 65536 + ((g & 1023) << 10) + (char_code_at(a, ++f) & 1023)
             d[e] = g >> 18 | 240
+            e += 1
             d[e] = g >> 12 & 63 | 128
+            e += 1
           else
             d[e] = g >> 12 | 224
+            e += 1
             d[e] = g >> 6 & 63 | 128
+            e += 1
           end
         end
         d[e] = g & 63 | 128
+        e += 1
       end
-      e +=1
       f += 1
     end
 
